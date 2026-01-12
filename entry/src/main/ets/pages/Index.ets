@@ -3,11 +3,9 @@ import { ArcButton, ArcButtonOptions, ArcButtonPosition, ArcButtonStyleMode, Col
 
 @Entry
 @Component
-export struct VerificationWindowPage {
-
+struct VerificationWindowPage {
   @State isInputWrong: boolean = false;
   @State inputText: string = '';
-  private imageId: number = 0;
   @State isPressed: boolean = false;
   @State boxValues: string[] = ['', '', '', ''];
 
@@ -15,7 +13,7 @@ export struct VerificationWindowPage {
     Scroll() {
       Column() {
 
-        Text("Please enter the code")
+        Text('Please enter the code')
           .width('90%')
           .textAlign(TextAlign.Center)
           .fontSize(16)
@@ -24,21 +22,28 @@ export struct VerificationWindowPage {
           .padding({ top: 50, bottom: 5 })
 
         Row({ space: 8 }) {
-          ForEach(this.boxValues, (value: string, index: number) => {
-            Box({ value: value })
-              .margin(5)
-          })
+          Box({ value: this.boxValues[0] }).margin(5)
+          Box({ value: this.boxValues[1] }).margin(5)
+          Box({ value: this.boxValues[2] }).margin(5)
+          Box({ value: this.boxValues[3] }).margin(5)
         }
         .width('90%')
         .justifyContent(FlexAlign.SpaceAround)
+        .onClick(() => {
+          focusControl.requestFocus('otpInput');
+        })
 
         TextInput({ text: this.inputText })
           .onChange((value: string) => {
-            this.inputText = value;
-            this.updateBoxValues(value);
+            if (value.length <= 4) {
+              this.inputText = value;
+              this.updateBoxValues(value);
+            }
           })
           .enablePreviewText(false)
           .maxLength(4)
+          .id('otpInput')
+          .type(InputType.Number)
           .fontColor(Color.Transparent)
           .backgroundColor(Color.Transparent)
           .width(0)
@@ -56,7 +61,7 @@ export struct VerificationWindowPage {
               .padding(2)
               .fillColor(Color.Red)
 
-            Text("Please fill the area")
+            Text('Please fill the area')
               .fontSize(12)
               .fontColor(Color.Red)
               .fontWeight(FontWeight.Medium)
@@ -73,17 +78,15 @@ export struct VerificationWindowPage {
             onClick: () => {
               this.isPressed = true
               if (this.inputText.length === 4) {
-
               } else {
                 this.isInputWrong = true;
               }
             }
           })
         })
-          .margin({top:30})
-          .width('%100')
+          .margin({ top: 30 })
+
       }
-      .width('100%')
       .backgroundColor(Color.White)
       .alignItems(HorizontalAlign.Center)
       .borderRadius($r('app.float.verify_ok_margin'))
